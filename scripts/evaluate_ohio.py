@@ -293,6 +293,10 @@ def run_inference(df: pd.DataFrame, model, scaler, device) -> tuple[np.ndarray, 
     return preds, y
 
 
+# Alias so train_ohio.py can pass a freshly-fit Ohio scaler instead of the sim one
+run_inference_with_scaler = run_inference
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # 4. Metrics
 # ─────────────────────────────────────────────────────────────────────────────
