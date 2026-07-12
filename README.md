@@ -33,14 +33,27 @@ A production-ready digital twin platform that creates a continuously adaptive vi
 
 ## Model Performance
 
-| Metric | Value | Clinical Assessment |
-|--------|-------|---------------------|
-| Overall MAE | **5.55 mg/dL** | Excellent (FDA threshold: <15 mg/dL) |
-| RMSE | 8.67 mg/dL | Good |
-| 30-min MAE | 5.53 mg/dL | Excellent |
-| 60-min MAE | 3.98 mg/dL | Excellent |
-| 90-min MAE | 5.10 mg/dL | Excellent |
-| 120-min MAE | 7.57 mg/dL | Excellent |
+Three training regimes have been evaluated. All real-world numbers are on the **OhioT1DM test set** (9 patients, 10,302 sequences).
+
+### In-silico (UVA/Padova ODE simulation — 30 virtual patients)
+
+| Horizon | RMSE | MAE | R² | Clarke A% |
+|---------|------|-----|----|-----------|
+| 30 min  | 10.9 mg/dL | 5.0 mg/dL | 0.989 | 99.4% |
+| 60 min  | 22.7 mg/dL | 10.0 mg/dL | 0.953 | 95.2% |
+| 90 min  | 33.8 mg/dL | 16.1 mg/dL | 0.897 | 88.1% |
+| 120 min | 43.4 mg/dL | 21.9 mg/dL | 0.830 | 82.2% |
+
+### Real-world — OhioT1DM (trained from scratch on 12 real patients)
+
+| Horizon | RMSE | MAE | R² | Clarke A% |
+|---------|------|-----|----|-----------|
+| 30 min  | **28.3 mg/dL** | **21.8 mg/dL** | **0.800** | **84.9%** |
+| 60 min  | 36.3 mg/dL | 28.5 mg/dL | 0.670 | 78.9% |
+| 90 min  | 44.2 mg/dL | 35.3 mg/dL | 0.508 | 74.3% |
+| 120 min | 50.1 mg/dL | 40.5 mg/dL | 0.365 | 71.0% |
+
+Zero D/E zone Clarke predictions at any horizon. See [full results →](docs/RESULTS.md)
 
 ## Quick Start
 
@@ -199,13 +212,11 @@ diabetes-digital-twin/
 
 ## Data Sources
 
-Trained on real patient data:
-
-| Dataset | Records | Content |
-|---------|---------|---------|
-| UCI Diabetes | 70 patients | CGM, insulin, meals (30 days each) |
-| PIMA Indians | 768 patients | Clinical profiles, glucose tolerance |
-| 130-Hospitals | 101k encounters | EHR, HbA1c, medications |
+| Dataset | Patients | Content | Used for |
+|---------|----------|---------|----------|
+| UVA/Padova simulator | 30 virtual (10 adolescent, 10 adult, 10 child) | ODE-generated CGM, insulin, meals at 5-min intervals | In-silico pre-training |
+| OhioT1DM 2018 | 6 real T1D patients | 8 weeks CGM, bolus/basal insulin, meals, exercise, HR | Real-world training & evaluation |
+| OhioT1DM 2020 | 6 real T1D patients | Same modalities as 2018 cohort | Real-world training & evaluation |
 
 ## Deployment
 
