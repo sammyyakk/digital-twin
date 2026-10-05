@@ -2,6 +2,8 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{makecell}
+\renewcommand{\cellalign}{c}\renewcommand{\theadalign}{c}
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{textcase}
@@ -452,8 +454,6 @@ Clinical evaluation includes Clarke and Parkes zones~[\hyperref[ref43label]{52}-
 
 \subsection{Preregistered Outcomes and Falsification Criteria}
 
-The analysis plan, primary and secondary endpoints, and falsification thresholds were committed before test-set evaluation, following preregistration practice~\cite{ref79}, to the public repository (\url{https://github.com/sammyyakk/digital-twin}) as \texttt{docs/PREREGISTRATION.md} in git commit \texttt{3baf636fce11ed5780d3e79aeee6ed8b4a5e02d4} (Sat Jul 25 17:49:43 2026 +0530).
-
 The primary outcome is 30-minute MAE under the official protocol for the physiology-focused branch. Secondary outcomes include all horizons under both protocols, persistence skill, Clarke, Parkes, and PRED-EGA distributions, the ablation matrix, quantile calibration, and the three $S_I$ validation checks. Table~\ref{tab:falsification} records the criteria that were fixed in advance; unmet criteria are reported as failures rather than redefined after inspection.
 
 No asymmetric hypoglycemia/hyperglycemia point-loss term is permitted, because such a term would directly optimize the safety table later used as evidence. The test set is evaluated only after model selection, and the official protocol is never described as subject-disjoint generalization.
@@ -488,7 +488,7 @@ Field-competitive point accuracy & 30-minute MAE $\leq$ 13.5 mg/dL & A field-rel
 Physics improves accuracy & Physics arm beats A0 at 30 minutes and survives paired Wilcoxon testing with Holm correction & If unmet, physics is not credited with point-accuracy improvement. & [\hyperref[ref48label]{58}-\hyperref[ref49label]{59}] \\
 $S_I$ is subject-specific & Between-subject CV $>$ 10\% & Rejects a parameter head collapsed to one population value. &~\cite{ref1,ref32} \\
 $S_I$ is stable & ICC(1) $>$ 0.5 on disjoint within-subject blocks & Rejects a window-level nuisance variable that merely absorbs prediction error. &~\cite{ref50,ref76} \\
-$S_I$ is externally consistent & Spearman $\rho < 0$ versus total daily dose, with a subject-bootstrap 95\% CI excluding zero & Evaluated separately under personalized and LOSO protocols. &~\cite{ref51},~[\hyperref[ref77label]{67}-\hyperref[ref78label]{68}] \\
+$S_I$ is externally consistent & Spearman $\rho < 0$ versus total daily dose, with a subject-bootstrap 95\% CI excluding zero & Evaluated separately under personalized and LOSO protocols. &~\cite{ref51},~[\hyperref[ref77label]{66}-\hyperref[ref78label]{67}] \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -697,22 +697,22 @@ Mechanistic models alone performed worst: with population parameters the ODE dri
 \caption{Comprehensive baseline comparison across 12 subjects evaluated on identical test windows ($n=26{,}498$). Metrics reported as mean $\pm$ SD across subjects (mg/dL). The A7 row is the single-seed ablation run (as in Table~\ref{tab:ablation}), not the final model in Table~\ref{tab:official}.}
 \label{tab:baselines_identical}
 \footnotesize
-\setlength{\tabcolsep}{4.2pt}
+\setlength{\tabcolsep}{2.3pt}
 \begin{tabular}{lrrrrrrrr}
 \toprule
 & \multicolumn{2}{c}{30 min} & \multicolumn{2}{c}{60 min} & \multicolumn{2}{c}{90 min} & \multicolumn{2}{c}{120 min} \\
 \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
 Model & MAE & RMSE & MAE & RMSE & MAE & RMSE & MAE & RMSE \\
 \midrule
-Persistence & 16.87 $\pm$ 1.92 & 23.37 $\pm$ 2.85 & 28.22 $\pm$ 3.24 & 38.15 $\pm$ 4.58 & 36.55 $\pm$ 4.00 & 48.69 $\pm$ 5.58 & 42.90 $\pm$ 4.46 & 56.43 $\pm$ 6.21 \\
-Bergman ODE (population) & 29.70 $\pm$ 9.67 & 39.67 $\pm$ 12.67 & 43.71 $\pm$ 12.84 & 57.08 $\pm$ 16.10 & 50.72 $\pm$ 13.66 & 65.26 $\pm$ 16.79 & 54.18 $\pm$ 13.78 & 69.20 $\pm$ 16.77 \\
-Bergman ODE (per-subject NLS) & 25.80 $\pm$ 8.36 & 34.72 $\pm$ 10.45 & 38.09 $\pm$ 9.56 & 50.41 $\pm$ 11.78 & 44.70 $\pm$ 8.99 & 58.47 $\pm$ 11.01 & 48.43 $\pm$ 8.35 & 63.03 $\pm$ 10.29 \\
-AR(6) & 14.39 $\pm$ 1.52 & 20.11 $\pm$ 2.65 & 25.52 $\pm$ 2.90 & 33.88 $\pm$ 3.90 & 33.18 $\pm$ 3.66 & 42.92 $\pm$ 4.62 & 38.30 $\pm$ 3.90 & 48.64 $\pm$ 4.92 \\
-ARX(6) & 13.97 $\pm$ 1.51 & 19.61 $\pm$ 2.76 & 24.48 $\pm$ 2.86 & 32.67 $\pm$ 3.98 & 32.24 $\pm$ 3.47 & 41.82 $\pm$ 4.47 & 37.68 $\pm$ 3.69 & 48.00 $\pm$ 4.77 \\
-LSTM (non-mechanistic) & 15.41 $\pm$ 2.16 & 21.46 $\pm$ 2.83 & 26.08 $\pm$ 3.87 & 35.24 $\pm$ 4.56 & 33.59 $\pm$ 4.77 & 44.97 $\pm$ 5.76 & 38.81 $\pm$ 5.30 & 51.54 $\pm$ 6.63 \\
-Transformer ($A0_{\text{no-mech}}$) & 14.96 $\pm$ 1.82 & 21.08 $\pm$ 2.55 & 26.06 $\pm$ 3.15 & 35.56 $\pm$ 4.15 & 34.46 $\pm$ 3.81 & 46.08 $\pm$ 5.11 & 40.06 $\pm$ 4.09 & 53.03 $\pm$ 5.63 \\
-Transformer (all features, A0) & 13.51 $\pm$ 1.63 & 19.38 $\pm$ 2.41 & 22.82 $\pm$ 2.88 & 31.61 $\pm$ 3.71 & 29.74 $\pm$ 3.74 & 40.32 $\pm$ 4.71 & 34.93 $\pm$ 4.20 & 46.70 $\pm$ 5.24 \\
-\textbf{Hybrid physics-guided (A7)} & \textbf{13.25 $\pm$ 1.69} & \textbf{19.06 $\pm$ 2.51} & \textbf{22.29 $\pm$ 2.93} & \textbf{30.89 $\pm$ 3.89} & \textbf{28.77 $\pm$ 3.75} & \textbf{39.04 $\pm$ 4.83} & \textbf{33.38 $\pm$ 4.21} & \textbf{44.78 $\pm$ 5.46} \\
+Persistence & 16.87$\,\pm\,$1.92 & 23.37$\,\pm\,$2.85 & 28.22$\,\pm\,$3.24 & 38.15$\,\pm\,$4.58 & 36.55$\,\pm\,$4.00 & 48.69$\,\pm\,$5.58 & 42.90$\,\pm\,$4.46 & 56.43$\,\pm\,$6.21 \\
+Bergman ODE (population) & 29.70$\,\pm\,$9.67 & 39.67$\,\pm\,$12.67 & 43.71$\,\pm\,$12.84 & 57.08$\,\pm\,$16.10 & 50.72$\,\pm\,$13.66 & 65.26$\,\pm\,$16.79 & 54.18$\,\pm\,$13.78 & 69.20$\,\pm\,$16.77 \\
+Bergman ODE (per-subject NLS) & 25.80$\,\pm\,$8.36 & 34.72$\,\pm\,$10.45 & 38.09$\,\pm\,$9.56 & 50.41$\,\pm\,$11.78 & 44.70$\,\pm\,$8.99 & 58.47$\,\pm\,$11.01 & 48.43$\,\pm\,$8.35 & 63.03$\,\pm\,$10.29 \\
+AR(6) & 14.39$\,\pm\,$1.52 & 20.11$\,\pm\,$2.65 & 25.52$\,\pm\,$2.90 & 33.88$\,\pm\,$3.90 & 33.18$\,\pm\,$3.66 & 42.92$\,\pm\,$4.62 & 38.30$\,\pm\,$3.90 & 48.64$\,\pm\,$4.92 \\
+ARX(6) & 13.97$\,\pm\,$1.51 & 19.61$\,\pm\,$2.76 & 24.48$\,\pm\,$2.86 & 32.67$\,\pm\,$3.98 & 32.24$\,\pm\,$3.47 & 41.82$\,\pm\,$4.47 & 37.68$\,\pm\,$3.69 & 48.00$\,\pm\,$4.77 \\
+LSTM (non-mechanistic) & 15.41$\,\pm\,$2.16 & 21.46$\,\pm\,$2.83 & 26.08$\,\pm\,$3.87 & 35.24$\,\pm\,$4.56 & 33.59$\,\pm\,$4.77 & 44.97$\,\pm\,$5.76 & 38.81$\,\pm\,$5.30 & 51.54$\,\pm\,$6.63 \\
+Transformer ($A0_{\text{no-mech}}$) & 14.96$\,\pm\,$1.82 & 21.08$\,\pm\,$2.55 & 26.06$\,\pm\,$3.15 & 35.56$\,\pm\,$4.15 & 34.46$\,\pm\,$3.81 & 46.08$\,\pm\,$5.11 & 40.06$\,\pm\,$4.09 & 53.03$\,\pm\,$5.63 \\
+Transformer (all features, A0) & 13.51$\,\pm\,$1.63 & 19.38$\,\pm\,$2.41 & 22.82$\,\pm\,$2.88 & 31.61$\,\pm\,$3.71 & 29.74$\,\pm\,$3.74 & 40.32$\,\pm\,$4.71 & 34.93$\,\pm\,$4.20 & 46.70$\,\pm\,$5.24 \\
+\textbf{Hybrid physics-guided (A7)} & \textbf{13.25$\,\pm\,$1.69} & \textbf{19.06$\,\pm\,$2.51} & \textbf{22.29$\,\pm\,$2.93} & \textbf{30.89$\,\pm\,$3.89} & \textbf{28.77$\,\pm\,$3.75} & \textbf{39.04$\,\pm\,$4.83} & \textbf{33.38$\,\pm\,$4.21} & \textbf{44.78$\,\pm\,$5.46} \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -897,12 +897,11 @@ Clinical agreement remains high across horizons: Clarke A+B decreases from 99.0\
 
 Because Clarke and Parkes grids were designed for point-in-time sensor measurements rather than forecasts, we also applied Prediction Error Grid Analysis (PRED-EGA)~\cite{ref53}, which classifies predictions as Accurate, Benign, or Erroneous separately in hypoglycemia ($\le 70$~mg/dL, following the PRED-EGA definition), euglycemia (70--180~mg/dL), and hyperglycemia ($> 180$~mg/dL) (Table~\ref{tab:predega}). Clinically acceptable predictions (Accurate + Benign) exceeded 99.4\% at every horizon, and Erroneous predictions stayed below 0.6\% even at 120~min. In hyperglycemia, 96.2\% of predictions were Accurate at 30~min and 86.1\% at 60~min; in hypoglycemia, Erroneous predictions were 0.00\% at 30~min and 0.13\% at 60~min.
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{PRED-EGA (Sivananthan et al.~\cite{ref53}) clinical prediction error grid results across 12 subjects (mean $\pm$ SD across subjects)}
 \label{tab:predega}
 \footnotesize
-\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrrrr}
 \toprule
 Metric & 30 min & 60 min & 90 min & 120 min \\
@@ -917,9 +916,8 @@ Hypoglycemia Erroneous (\%) & $0.00 \pm 0.00$ & $0.13 \pm 0.44$ & $0.24 \pm 0.54
 Hyperglycemia Accurate (\%) & $96.2 \pm 2.8$ & $86.1 \pm 6.8$ & $75.6 \pm 9.6$ & $66.1 \pm 12.0$ \\
 Hyperglycemia Erroneous (\%) & $0.00 \pm 0.00$ & $0.00 \pm 0.00$ & $0.00 \pm 0.00$ & $0.00 \pm 0.00$ \\
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\end{tabular}
+\end{table*}
 
 However, as observed with Clarke zone A, standard point-forecast metrics reward predictions close to the center and can underestimate acute excursions. Thus, 89.8\% of predictions in Clarke zone A and 99.96\% in PRED-EGA clinically acceptable at 30 minutes can still coexist with the median point forecast missing 45\% of hypoglycemic readings (pointwise sensitivity 0.551; Table~\ref{tab:hypo_event}).
 
@@ -1007,7 +1005,7 @@ To avoid test-set reuse, the alarm threshold was chosen on the validation split 
 \footnotesize
 \begin{tabular}{llrrrrrrr}
 \toprule
-Model & Alarm Head & Point Sens. & Point Spec. & Point Prec. & Event Sens. & Specificity & False Alarms/Day & Median Lead Time \\
+Model & Alarm Head & \makecell{Point\\Sens.} & \makecell{Point\\Spec.} & \makecell{Point\\Prec.} & \makecell{Event\\Sens.} & Specificity & \makecell{False\\Alarms/Day} & \makecell{Median\\Lead Time} \\
 \midrule
 A0 (No physics) & Median (point) & 0.413 & 0.994 & 0.657 & 10.7\% & 99.4\% & 0.59 & 12.5 min \\
 A0 (No physics) & Quantile $q=0.10$ & 0.861 & 0.956 & 0.357 & 58.9\% & 95.9\% & 2.00 & 15.0 min \\
@@ -1029,7 +1027,7 @@ Table~\ref{tab:calibration} reports calibration, sharpness, and scoring rules. E
 \footnotesize
 \begin{tabular}{rrrrrrrrr}
 \toprule
-Horizon & Nominal 80\% Cov. & Lower $q_{0.10}$ Cov. & Upper $q_{0.90}$ Cov. & Cov. ($G<80$) & Width (mg/dL) & Pinball ($q_{0.10}$) & Pinball ($q_{0.50}$) & CRPS (mg/dL) \\
+Horizon & \makecell{Nominal\\80\% Cov.} & \makecell{Lower\\$q_{0.10}$ Cov.} & \makecell{Upper\\$q_{0.90}$ Cov.} & \makecell{Cov.\\($G<80$)} & \makecell{Width\\(mg/dL)} & \makecell{Pinball\\($q_{0.10}$)} & \makecell{Pinball\\($q_{0.50}$)} & \makecell{CRPS\\(mg/dL)} \\
 \midrule
 30 min  & 79.4\% & 9.47\%  & 88.9\% & 76.4\% & 39.9 & 2.98 & 6.53  & 9.74 \\
 60 min  & 78.5\% & 9.63\%  & 88.1\% & 64.1\% & 65.9 & 4.77 & 10.96 & 16.18 \\
@@ -1166,12 +1164,11 @@ We tested whether the stability and dose correlation of $S_I$ could be artifacts
     \item \textbf{Learned trust gate $g$:} The gate on the Bergman prior, initialized at $g_0 \approx 0.10$, converged to 0.152 in the point forecaster (A7) and 0.128 in the quantile forecaster.
 \end{enumerate}
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Non-circularity, confounding, and physiological validation of learned insulin sensitivity $S_I$}
 \label{tab:si_circularity}
 \footnotesize
-\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrr}
 \toprule
 Analysis / Validation Check & Value & Interpretation / Threshold \\
@@ -1198,9 +1195,8 @@ Initialized gate $g_0 = \sigma(-2.2)$ & 9.98\% & Initialization \\
 Converged gate $g$ (Point Forecaster, A7) & 15.2\% & Converged value \\
 Converged gate $g$ (Quantile Forecaster, A7) & 12.8\% & Converged value \\
 \bottomrule
-\end{tabular}%
-}
-\end{table}
+\end{tabular}
+\end{table*}
 
 Body weight is not identifiable because all OhioT1DM files use the same de-identification placeholder. The dose-per-kilogram correlation is therefore not independent of total daily dose. Moreover, $p_2$ and $p_3$ are range-constrained, so agreement with a plausible interval is partly imposed rather than learned.
 
@@ -1287,7 +1283,7 @@ Attribution concentrates in the most recent input positions, supporting attentio
 
 \subsection{Comparison With Published Work}
 
-At 30 minutes, the current work is mid-field relative to the 2020 challenge literature~\cite{ref64}, [\hyperref[ref60label]{71}-\hyperref[ref63label]{74}] (Table~\ref{tab:published}): on the matched 2020 cohort (subjects 540/544/552/567/584/596, the six subjects on which the challenge entries were scored), RMSE is 18.74 and MAE is 13.24~mg/dL. Further 2020 entries report RMSE@30 of 18.34 and 19.60~mg/dL~[\hyperref[ref65label]{75}-\hyperref[ref70label]{76}]. At 60 minutes, RMSE (31.16) is essentially tied with the best entry (31.10), and MAE (22.55) is lower than every entry except one whose MAE-to-RMSE ratio is far outside the range of the other entries~\cite{ref60}; differences in window eligibility, missing-data handling, external pretraining, and best-configuration reporting prevent a state-of-the-art claim. Across all 12 subjects, the only published comparison is GARNN~\cite{ref75} (18.97/13.34~mg/dL at 30 minutes), against which the all-subject result (18.84/13.08) should be read as a tie. The defensible advances are calibrated hypoglycemia detection, explicit personalized-versus-LOSO decomposition, preregistered validation of a physiological parameter, and a quantified account of the benefits and costs of Bergman constraints. The all-12-subject official figures reported throughout the Results section (e.g., 18.84/13.08 at 30 minutes) differ slightly from the 2020-cohort figures in Tables~\ref{tab:landscape} and~\ref{tab:published}; both are correct, answer different comparability questions, and should not be averaged together.
+At 30 minutes, the current work is mid-field relative to the 2020 challenge literature~\cite{ref64}, [\hyperref[ref60label]{70}-\hyperref[ref63label]{73}] (Table~\ref{tab:published}): on the matched 2020 cohort (subjects 540/544/552/567/584/596, the six subjects on which the challenge entries were scored), RMSE is 18.74 and MAE is 13.24~mg/dL. Further 2020 entries report RMSE@30 of 18.34 and 19.60~mg/dL~[\hyperref[ref65label]{74}-\hyperref[ref70label]{75}]. At 60 minutes, RMSE (31.16) is essentially tied with the best entry (31.10), and MAE (22.55) is lower than every entry except one whose MAE-to-RMSE ratio is far outside the range of the other entries~\cite{ref60}; differences in window eligibility, missing-data handling, external pretraining, and best-configuration reporting prevent a state-of-the-art claim. Across all 12 subjects, the only published comparison is GARNN~\cite{ref75} (18.97/13.34~mg/dL at 30 minutes), against which the all-subject result (18.84/13.08) should be read as a tie. The defensible advances are calibrated hypoglycemia detection, explicit personalized-versus-LOSO decomposition, preregistered validation of a physiological parameter, and a quantified account of the benefits and costs of Bergman constraints. The all-12-subject official figures reported throughout the Results section (e.g., 18.84/13.08 at 30 minutes) differ slightly from the 2020-cohort figures in Tables~\ref{tab:landscape} and~\ref{tab:published}; both are correct, answer different comparability questions, and should not be averaged together.
 
 \begin{table*}[t]
 \centering
@@ -1337,9 +1333,32 @@ Priority extensions are external validation on larger cohorts (e.g., Shanghai, D
 
 %=================================================================
 \section{Conclusion}
+\begin{table*}[t]
+\centering
+\caption{Patient-parameter vector $\theta_p$ and admissible intervals}
+\label{tab:params}
+\footnotesize
+\begin{tabular}{clllr}
+\toprule
+Symbol & Meaning & Range & Unit & Population anchor \\
+\midrule
+$p_1$ & Insulin-independent glucose disposal & 0--0.030 & min$^{-1}$ & 0.013 \\
+$p_2$ & Decay of remote insulin action & 0.005--0.10 & min$^{-1}$ & 0.025 \\
+$p_3$ & Build rate of action from insulin excess & $10^{-6}$--$3\times10^{-5}$ & mL $\mu$U$^{-1}$min$^{-2}$ & $6.25\times10^{-6}$ \\
+$n$ & Plasma insulin clearance & 0.08--0.25 & min$^{-1}$ & 0.138 \\
+$V_G$ & Glucose distribution volume & 1.4--2.4 & dL/kg & 1.88 \\
+$V_I$ & Insulin distribution volume & 0.08--0.18 & L/kg & 0.12 \\
+$t_{\max,I}$ & Time to peak SC absorption & 30--90 & min & 55 \\
+$k_{\text{gri}}$ & Gastric emptying rate & 0.008--0.10 & min$^{-1}$ & 0.035 \\
+$k_{\text{abs}}$ & Intestinal absorption rate & 0.005--0.10 & min$^{-1}$ & 0.0167 \\
+$f$ & Carbohydrate bioavailability & 0.70--1.00 & dimensionless & 0.90 \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 An audited, hybrid physics-guided forecaster can outperform a validated persistence baseline by 19--21\% RMSE across 30--120-minute horizons. Physics improves point accuracy only modestly, and significantly only in a post hoc five-seed replication. The strongest evidence is instead that physiology can provide stable patient-specific structure alongside this small accuracy gain, and that calibrated distributional forecasting can recover hypoglycemic events missed by an otherwise accurate median forecast. Horizon integrity, subject-level statistics, matched generalization protocols, and explicit safety trade-offs are prerequisites for credible glucose forecasting.
 
+\newpage\null\newpage
 %=================================================================
 \appendices
 \section{Notation, Variables, and Terminology}
@@ -1385,28 +1404,7 @@ Table~\ref{tab:params} lists the estimated patient-parameter vector. Notation ta
 
 
 
-\begin{table*}[t]
-\centering
-\caption{Patient-parameter vector $\theta_p$ and admissible intervals}
-\label{tab:params}
-\footnotesize
-\begin{tabular}{clllr}
-\toprule
-Symbol & Meaning & Range & Unit & Population anchor \\
-\midrule
-$p_1$ & Insulin-independent glucose disposal & 0--0.030 & min$^{-1}$ & 0.013 \\
-$p_2$ & Decay of remote insulin action & 0.005--0.10 & min$^{-1}$ & 0.025 \\
-$p_3$ & Build rate of action from insulin excess & $10^{-6}$--$3\times10^{-5}$ & mL $\mu$U$^{-1}$min$^{-2}$ & $6.25\times10^{-6}$ \\
-$n$ & Plasma insulin clearance & 0.08--0.25 & min$^{-1}$ & 0.138 \\
-$V_G$ & Glucose distribution volume & 1.4--2.4 & dL/kg & 1.88 \\
-$V_I$ & Insulin distribution volume & 0.08--0.18 & L/kg & 0.12 \\
-$t_{\max,I}$ & Time to peak SC absorption & 30--90 & min & 55 \\
-$k_{\text{gri}}$ & Gastric emptying rate & 0.008--0.10 & min$^{-1}$ & 0.035 \\
-$k_{\text{abs}}$ & Intestinal absorption rate & 0.005--0.10 & min$^{-1}$ & 0.0167 \\
-$f$ & Carbohydrate bioavailability & 0.70--1.00 & dimensionless & 0.90 \\
-\bottomrule
-\end{tabular}
-\end{table*}
+
 
 
 
@@ -1544,8 +1542,6 @@ $f$ & Carbohydrate bioavailability & 0.70--1.00 & dimensionless & 0.90 \\
 \bibitem{ref50}\label{ref50label} P.~E. Shrout and J.~L. Fleiss, ``Intraclass correlations: Uses in assessing rater reliability,'' \emph{Psychol. Bull.}, vol. 86, no. 2, pp. 420--428, 1979.
 
 \bibitem{ref51}\label{ref51label} C. Spearman, ``The proof and measurement of association between two things,'' \emph{Am. J. Psychol.}, vol. 15, no. 1, pp. 72--101, 1904.
-
-\bibitem{ref79}\label{ref79label} B.~A. Nosek, C.~R. Ebersole, A.~C. DeHaven, and D.~T. Mellor, ``The preregistration revolution,'' \emph{Proc. Natl. Acad. Sci. U.S.A.}, vol. 115, no. 11, pp. 2600--2606, 2018.
 
 \bibitem{ref54}\label{ref54label} M. Sundararajan, A. Taly, and Q. Yan, ``Axiomatic attribution for deep networks,'' in \emph{Proc. 34th Int. Conf. Mach. Learn.}, PMLR, vol. 70, 2017, pp. 3319--3328.
 
