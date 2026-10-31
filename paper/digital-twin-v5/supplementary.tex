@@ -2,13 +2,14 @@
 \usepackage[margin=2cm]{geometry}
 \usepackage{amsmath,amssymb,amsfonts,booktabs,array,multirow}
 \usepackage[table]{xcolor}
+\usepackage{longtable}
 \renewcommand{\thetable}{S\arabic{table}}
 \begin{document}
 \begin{center}{\Large Supplementary Material}\\[4pt]
 Physics-Guided Probabilistic Glucose Forecasting in Type 1 Diabetes: An Integrity-Checked Multi-Horizon Evaluation with a Stable Patient-Specific Insulin-Sensitivity Estimate\end{center}
 
 \section*{Notation, Variables, and Terminology}
-Rate constants are expressed per minute unless stated otherwise. A subscript $b$ denotes a basal or fasting quantity, a hat denotes a prediction, bold lowercase symbols denote vectors, and bold uppercase symbols denote matrices. Bracketed reference numbers refer to the reference list of the main text. The patient-parameter vector $\theta_p$ is listed in Table~XIV of the main text.
+Rate constants are expressed per minute unless stated otherwise. A subscript $b$ denotes a basal or fasting quantity, a hat denotes a prediction, bold lowercase symbols denote vectors, and bold uppercase symbols denote matrices. Bracketed reference numbers refer to the reference list of the main text. The patient-parameter vector $\theta_p$ is listed in Table~XV of the main text.
 
 \begin{table}[h!]
 \centering
@@ -57,7 +58,7 @@ $c_k$ & learned scalar & Spline coefficient emitted by the trajectory head. \\
 $G_\theta(t)$ & mg/dL & Anchored learned trajectory $G_0 + \sum_k c_k[B_k(t) - B_k(0)]$. \\
 $A, B$ & $6\times6$, $6\times3$ & Continuous compartment-state and input matrices. \\
 $A_d, B_d$ & discrete matrices & Exact zero-order-hold matrices obtained from one augmented matrix exponential. \\
-$\theta_p$ & 10 elements & Patient-specific physiological parameter vector in Table~XIV of the main text. \\
+$\theta_p$ & 10 elements & Patient-specific physiological parameter vector in Table~XV of the main text. \\
 $g = \sigma(\gamma)$ & initialized near 0.10 & Learned trust gate controlling the mechanistic prior. \\
 $\hat{G}_{0.5}$ & mg/dL & Median forecast and reported point prediction. \\
 $\hat{G}_q$ & mg/dL & Forecast at quantile level $q \in \{0.1, 0.5, 0.9\}$. \\
@@ -140,6 +141,100 @@ IG/SHAP & Integrated gradients / SHapley Additive exPlanations & IG is used; the
 SD/CI/ICC & Standard deviation / confidence interval / intraclass correlation & Uncertainty and reliability summaries computed at the subject level. \\
 A0--A7 & Ablation arms & Controlled variants of physics form, weighting, parameter personalization, and curriculum. \\
 ZOH & Zero-order hold & Exact interval propagation under piecewise-constant inputs; also used in the literature for persistence. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+\section*{Secondary Analyses of the Physics Contribution}
+These analyses compare A7 (physics-guided) with A0 (no physics) on the official test windows, with the five fair-selection seeds of Table~VIII in the main text. They were written down and time-stamped before they were run (\texttt{PREREG\_ROUND6.md}), after the main results were known; deviations are listed in \texttt{ROUND6\_RESULTS.md}. Gap = A0 $-$ A7 (positive = A7 better), seed-averaged per subject; paired Wilcoxon test and subject-bootstrap 95\% CI (5,000 resamples). n.d. = no difference detected.
+
+{\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{l>{\raggedright\arraybackslash}p{3.6cm}rrrrrlrrl}
+\caption{Secondary analyses of the A0--A7 MAE gap (mg/dL; positive = A7 better), seed-averaged per subject over five seeds. Holm correction over all 55 tests in this family; with 12 subjects the smallest attainable Holm-adjusted $p$ is about 0.027. P1: horizon trend; P2: post-meal (0--180~min after a carbohydrate entry) vs.\ other windows; P3: target glycemic range; P4: rate of change at the forecast origin (mg/dL/min); P5: fraction of forecast trajectories with $|dG/dt| > 4$~mg/dL/min or outside 40--400~mg/dL; P7: across-seed SD of mean MAE.}\label{tab:secondary}\\
+\toprule
+ & Stratum & $h$ & $n$ & A0 & A7 & Gap & 95\% CI & raw $p$ & Holm $p$ & Verdict \\
+\midrule
+\endfirsthead
+\toprule
+ & Stratum & $h$ & $n$ & A0 & A7 & Gap & 95\% CI & raw $p$ & Holm $p$ & Verdict \\
+\midrule
+\endhead
+P1 & all & 30 & 12 & 13.54 & 13.37 & +0.17 & [+0.06, +0.30] & 0.0093 & 0.353 & n.d. \\
+P1 & all & 60 & 12 & 23.01 & 22.60 & +0.41 & [+0.18, +0.67] & 0.0049 & 0.205 & n.d. \\
+P1 & all & 90 & 12 & 30.01 & 29.28 & +0.72 & [+0.37, +1.11] & 0.0024 & 0.110 & n.d. \\
+P1 & all & 120 & 12 & 35.07 & 34.08 & +0.99 & [+0.53, +1.49] & 0.0015 & 0.069 & n.d. \\
+P1 & trend (per-subject Spearman gap~horizon, Wilcoxon vs 0) & -- & 12 & -- & -- & +0.68 & [+0.33, +0.97] & 0.0039 & 0.168 & n.d. \\
+P2 & post-meal (0-180 min) & 30 & 11 & 16.38 & 16.22 & +0.16 & [-0.08, +0.44] & 0.4648 & 1.000 & n.d. \\
+P2 & other & 30 & 12 & 11.74 & 11.59 & +0.15 & [+0.08, +0.23] & 0.0010 & 0.049 & helps \\
+P2 & difference of gaps (post-meal minus other) & 30 & 11 & -- & -- & +0.01 & [-0.21, +0.26] & 0.8984 & 1.000 & n.d. \\
+P2 & post-meal (0-180 min) & 60 & 11 & 26.79 & 26.60 & +0.19 & [-0.43, +0.80] & 0.6377 & 1.000 & n.d. \\
+P2 & other & 60 & 12 & 20.49 & 20.02 & +0.47 & [+0.32, +0.65] & 0.0005 & 0.027 & helps \\
+P2 & difference of gaps (post-meal minus other) & 60 & 11 & -- & -- & -0.30 & [-0.89, +0.26] & 0.5771 & 1.000 & n.d. \\
+P2 & post-meal (0-180 min) & 90 & 11 & 33.77 & 33.47 & +0.30 & [-0.33, +0.89] & 0.4648 & 1.000 & n.d. \\
+P2 & other & 90 & 12 & 27.56 & 26.59 & +0.97 & [+0.61, +1.36] & 0.0005 & 0.027 & helps \\
+P2 & difference of gaps (post-meal minus other) & 90 & 11 & -- & -- & -0.73 & [-1.28, -0.23] & 0.0244 & 0.781 & n.d. \\
+P2 & post-meal (0-180 min) & 120 & 11 & 38.07 & 37.53 & +0.54 & [-0.04, +1.10] & 0.1230 & 1.000 & n.d. \\
+P2 & other & 120 & 12 & 33.05 & 31.69 & +1.36 & [+0.72, +2.07] & 0.0024 & 0.110 & n.d. \\
+P2 & difference of gaps (post-meal minus other) & 120 & 11 & -- & -- & -0.94 & [-1.81, -0.11] & 0.0537 & 1.000 & n.d. \\
+P3 & target $<$70 & 30 & 12 & 13.44 & 13.19 & +0.25 & [-0.87, +1.34] & 0.5693 & 1.000 & n.d. \\
+P3 & target 70-180 & 30 & 12 & 11.98 & 11.89 & +0.09 & [-0.03, +0.21] & 0.2334 & 1.000 & n.d. \\
+P3 & target $>$180 & 30 & 12 & 16.97 & 16.67 & +0.30 & [+0.12, +0.47] & 0.0122 & 0.439 & n.d. \\
+P3 & target $<$70 & 60 & 12 & 30.17 & 29.38 & +0.79 & [-1.77, +3.11] & 0.3804 & 1.000 & n.d. \\
+P3 & target 70-180 & 60 & 12 & 19.58 & 19.51 & +0.07 & [-0.25, +0.40] & 0.9697 & 1.000 & n.d. \\
+P3 & target $>$180 & 60 & 12 & 29.85 & 29.00 & +0.85 & [+0.51, +1.24] & 0.0005 & 0.027 & helps \\
+P3 & target $<$70 & 90 & 12 & 43.18 & 43.11 & +0.07 & [-3.56, +3.08] & 0.6221 & 1.000 & n.d. \\
+P3 & target 70-180 & 90 & 12 & 24.71 & 24.61 & +0.10 & [-0.39, +0.54] & 0.5693 & 1.000 & n.d. \\
+P3 & target $>$180 & 90 & 12 & 40.18 & 38.60 & +1.58 & [+0.89, +2.32] & 0.0010 & 0.049 & helps \\
+P3 & target $<$70 & 120 & 12 & 52.57 & 52.69 & -0.12 & [-4.34, +3.37] & 0.6221 & 1.000 & n.d. \\
+P3 & target 70-180 & 120 & 12 & 28.28 & 27.95 & +0.33 & [-0.23, +0.82] & 0.1763 & 1.000 & n.d. \\
+P3 & target $>$180 & 120 & 12 & 47.73 & 46.00 & +1.73 & [+0.59, +2.99] & 0.0210 & 0.693 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|<$1 & 30 & 12 & 11.86 & 11.71 & +0.15 & [+0.08, +0.23] & 0.0068 & 0.273 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|$ 1-2 & 30 & 12 & 18.26 & 18.05 & +0.21 & [-0.12, +0.59] & 0.4697 & 1.000 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|>$2 & 30 & 12 & 25.08 & 24.87 & +0.21 & [-0.33, +0.74] & 0.5693 & 1.000 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|<$1 & 60 & 12 & 20.96 & 20.53 & +0.43 & [+0.24, +0.63] & 0.0015 & 0.069 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|$ 1-2 & 60 & 12 & 29.23 & 28.89 & +0.33 & [-0.28, +1.03] & 0.4697 & 1.000 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|>$2 & 60 & 12 & 35.84 & 35.71 & +0.13 & [-0.84, +1.06] & 0.7334 & 1.000 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|<$1 & 90 & 12 & 27.98 & 27.21 & +0.78 & [+0.43, +1.14] & 0.0005 & 0.027 & helps \\
+P4 & $|\mathrm{ROC}\_{15}|$ 1-2 & 90 & 12 & 36.13 & 35.53 & +0.60 & [-0.09, +1.25] & 0.2036 & 1.000 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|>$2 & 90 & 12 & 43.02 & 42.73 & +0.29 & [-1.20, +1.78] & 0.7910 & 1.000 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|<$1 & 120 & 12 & 33.09 & 31.98 & +1.12 & [+0.65, +1.61] & 0.0010 & 0.049 & helps \\
+P4 & $|\mathrm{ROC}\_{15}|$ 1-2 & 120 & 12 & 41.00 & 40.42 & +0.59 & [-0.16, +1.35] & 0.2036 & 1.000 & n.d. \\
+P4 & $|\mathrm{ROC}\_{15}|>$2 & 120 & 12 & 47.30 & 47.06 & +0.24 & [-1.25, +1.72] & 0.9697 & 1.000 & n.d. \\
+P5 & frac trajectories with |dG/dt|$>$4 mg/dL/min & -- & 12 & 0.368 & 0.000 & +0.368 & [+0.345, +0.390] & 0.0005 & 0.027 & helps \\
+P5 & frac trajectories $<$40 or $>$400 mg/dL & -- & 12 & 0.000 & 0.000 & +0.000 & [-0.000, +0.001] & 0.6250 & 1.000 & n.d. \\
+P7 & across-seed SD of mean MAE (gap = SD\_A0 - SD\_A7) & 30 & 5 & 0.097 & 0.114 & -0.017 & [-0.114, +0.072] & 0.4262 & 1.000 & n.d. \\
+P7 & across-seed SD of mean MAE (gap = SD\_A0 - SD\_A7) & 60 & 5 & 0.160 & 0.320 & -0.160 & [-0.289, +0.060] & 0.1038 & 1.000 & n.d. \\
+P7 & across-seed SD of mean MAE (gap = SD\_A0 - SD\_A7) & 90 & 5 & 0.152 & 0.527 & -0.376 & [-0.571, -0.045] & 0.0326 & 0.978 & n.d. \\
+P7 & across-seed SD of mean MAE (gap = SD\_A0 - SD\_A7) & 120 & 5 & 0.101 & 0.637 & -0.536 & [-0.673, -0.097] & 0.0187 & 0.637 & n.d. \\
+\bottomrule
+\end{longtable}
+}
+
+In a post hoc check of P5 (not part of the family above), the A0 excursions lay almost entirely in the first and last 10~min of the 2-h trajectory: excluding those minutes, 0.10\% of A0 trajectories and 0\% of A7 trajectories exceeded 4~mg/dL/min.
+
+\begin{table}[h!]
+\centering
+\caption{Reduced training data (P6): A0 and A7 retrained on 25\% or 50\% of the training subjects (three seeds each; same test set). MAE in mg/dL; gap = A0 $-$ A7. The 25\% and 50\% rows are in the Holm family of Table~\ref{tab:secondary}; the 100\% rows (same three seeds) are a descriptive reference only.}
+\label{tab:lowdata}
+\footnotesize
+\begin{tabular}{lrrrrlrr}
+\toprule
+Training data & $h$ & A0 & A7 & Gap & 95\% CI & raw $p$ & Holm $p$ \\
+\midrule
+25\% & 30 & 16.18 & 15.69 & +0.49 & [-0.09, +0.92] & 0.0425 & 1.000 \\
+25\% & 60 & 26.79 & 25.54 & +1.25 & [+0.38, +1.99] & 0.0269 & 0.833 \\
+25\% & 90 & 34.29 & 32.35 & +1.94 & [+0.88, +2.93] & 0.0122 & 0.439 \\
+25\% & 120 & 39.72 & 37.37 & +2.35 & [+1.21, +3.46] & 0.0049 & 0.205 \\
+50\% & 30 & 14.87 & 14.72 & +0.15 & [-0.01, +0.32] & 0.2661 & 1.000 \\
+50\% & 60 & 24.95 & 24.40 & +0.55 & [+0.16, +0.97] & 0.0342 & 0.991 \\
+50\% & 90 & 32.43 & 31.45 & +0.99 & [+0.41, +1.53] & 0.0093 & 0.353 \\
+50\% & 120 & 37.96 & 36.55 & +1.41 & [+0.64, +2.13] & 0.0068 & 0.273 \\
+100\% (descriptive) & 30 & 13.50 & 13.36 & +0.14 & [-0.01, +0.29] & 0.0522 & -- \\
+100\% (descriptive) & 60 & 22.93 & 22.61 & +0.32 & [+0.05, +0.62] & 0.0640 & -- \\
+100\% (descriptive) & 90 & 29.95 & 29.34 & +0.61 & [+0.21, +1.03] & 0.0161 & -- \\
+100\% (descriptive) & 120 & 35.07 & 34.12 & +0.94 & [+0.48, +1.41] & 0.0034 & -- \\
 \bottomrule
 \end{tabular}
 \end{table}

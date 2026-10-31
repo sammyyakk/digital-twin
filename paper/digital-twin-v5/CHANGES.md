@@ -396,3 +396,73 @@ Open items from here on are in `TODO_ROUND5.md`.
 
 ## Part 16 — Ref [11] year (26 Oct 2026)
 - Ref [11]: "2027 (published online 2026)" → "2027", as confirmed by Dhriti (D-13 done).
+
+## Part 18 — Round 6: Samyak's re-evaluation (`DHRITI_ROUND6.md`) applied (26 Oct 2026)
+Base: `sammyyakk/digital-twin` main @ `c699992`; `main.tex` from `247c1b8`, as `DHRITI_ROUND6.md` assumes. The
+round-5 edits made on 26 Oct afternoon (never pushed) are superseded: the round-5 "A0 detects more events" result was
+one seed with unequal patience (12 vs 8), and the five-seed replication (P9) replaces it.
+- **All sections of `DHRITI_ROUND6.md` applied as written:** abstract (methods sentence, physics and cross-cohort
+  results, persistence-alarm sentence, conclusion); contributions bullets 3 and 5; new paragraph on the secondary
+  analyses in Sec. II-H (label `sec:prespec`); Table II physics outcome; new Sec. III-D2 "Cross-Cohort Transfer" with
+  Table VI and a figure; Sec. III-E and Fig. 4 caption (0.17/0.99 mg/dL); Table VIII (five-seed) rows, header and
+  caption; the post-table paragraph and "Where the gain arises"; Table IX PRED-EGA and "0.14% at 60 min"; Sec. III-G
+  (five ways, persistence and linear-extrapolation alarms, five-seed A0 vs A7 paragraph, old A0 rows removed from
+  Table X with the two baseline rows added, new Table XI five-seed alarm table, III-G3 renamed "Alarm Operating Curves"
+  with the F2 analysis removed); partial correlations restored with −0.885 and the method note; attribution
+  ρ = 0.740; Discussion, Limitations and Conclusion.
+- **Supplement:** new Table S6 (secondary analyses P1–P5 and P7, all 47 rows, from `round6_all_tests.csv`) and Table S7
+  (P6 low data, from `round6_p6_lowdata.csv`), plus the P5 robustness sentence (0.10% vs 0%).
+- **Additions not in `DHRITI_ROUND6.md`:**
+  1. Novelty point (iv) said hypoglycemia was evaluated under LOSO; it was not. Now: "quantile forecasts whose
+     hypoglycemia alarms are compared with a simple persistence alarm, and point accuracy reported under both
+     personalized and leave-one-subject-out protocols".
+  2. Sec. III-J: "The defensible advances are lower-quantile hypoglycemia detection" → "an evaluation of hypoglycemia
+     alarms against a simple baseline" (the persistence alarm matches the quantile alarm).
+  3. "Where the gain arises": added "In that family the overall gaps themselves did not survive correction
+     (Holm p = 0.07–0.35), so these strata indicate where the effect lies rather than add independent evidence for it."
+     (Table S6 P1 rows show this; without the sentence, the main text and Table S6 look contradictory.)
+  4. Main text pointed to "Table S1"; the supplement already had S1–S5, so the new tables are S6 and S7. Supplement
+     references updated to Table VIII (five-seed) and Table XV (parameter vector) after renumbering.
+- **Checks:** no compile errors or overfull lines; all 78 references cited with correct numbers; none of `84.0`,
+  `0.771`, `3,397`, `0.886`, `0.731`, `13.88`, `0.00195`, `0.413`, `0.861`, `reduced variability` remain. Key numbers
+  checked against `round6_hypo_multiseed.csv`, `round6_external_summary.csv`, `si_partial_corr_regen.csv`,
+  `round6_all_tests.csv`, `f2_threshold_regen.csv`.
+- **Length:** 19 pages (was 17). Page 16 holds only the parameter table and the last 10 lines of the Conclusion.
+  Removing the cross-cohort figure (its numbers are all in Table VI) gives 18 pages with no blank page.
+- **Final cross-check fixes (26 Oct, after a full number check against the result files):**
+  1. Discussion: cross-cohort gain "about 9--16%" -> "about 9--17%" (largest is 16.6%, 2020->2018 at 90 min).
+  2. Abstract conclusion: "gains that grew with horizon" -> "gains that were larger at longer horizons"; Sec. III-E1
+     now adds that the pre-specified trend test (P1) was not significant after Holm correction (p = 0.17).
+  3. Abstract methods: "specified before they were run" -> "planned after the main results but before being run"
+     (matches "post hoc" in Results and Sec. II-H).
+  4. Discussion: "most clearly, under distribution shift" -> "most consistently" (no cross-cohort test survived Holm).
+  5. Limitations: seed-variability sentence now ends "(not significant)" (P7, Holm p >= 0.64).
+- Fig. (feature attribution), permutation panel: feature labels switched from monospace to the normal font (31 Oct).
+- Abstract shortened (31 Oct), 485 -> 413 words (S_I and alarm sentences then reworded for clarity). Methods: "Secondary analyses, planned after the main results but
+  before being run, replicated..." -> "Post hoc secondary analyses replicated...". Results rewritten from 215 to 130
+  words; same findings and numbers, dropped: RMSE at each horizon (now a 30-120 min range), the single-seed 30-min MAEs
+  and five-seed 30-min MAEs (now the 0.17-0.99 range), the attribution sentence, and the alarm precision 0.347.
+- Abstract rewritten to under 300 words (31 Oct): 413 -> 290 words (296 counted from the PDF). Same findings; dropped
+  the per-horizon RMSE values and 18.84 headline (now "19.4-21.2% lower RMSE than persistence at 30-120 min"), the
+  Wilcoxon/Holm detail in Methods, the low-glucose coverage clause in the Conclusion, and shortened every sentence.
+  Side effect: the paper is now 18 pages; the Conclusion ends on p15 and the appendix starts on p16, no blank page.
+- Abstract "Background and objective" rewritten (31 Oct): "Glucose dynamics in type 1 diabetes are nonlinear,
+  delayed, and patient-specific, driven by meals and insulin. This study develops a physics-guided probabilistic
+  forecaster that combines deep sequence learning with mechanistic physiological modeling, and tests what the physics
+  adds beyond accuracy under an integrity-checked protocol." To stay under 300 words, Methods/Results/Conclusion
+  lightly trimmed (absorption-state clause removed, post hoc sentence shortened). Abstract now 293 words.
+- Abstract Conclusion rewritten to state the contribution (31 Oct): "Unlike evaluations of physics-guided forecasters
+  based on accuracy alone, this study shows what physics adds: a stable insulin-sensitivity estimate, dose-consistent
+  under personalized evaluation, and small accuracy gains that grow under cross-cohort transfer, but no better
+  hypoglycemia detection than a tuned persistence alarm."
+- Sec. III-G3: file path "(data/sensitivity_precision_curves.csv)" replaced by "(in the code repository)" (31 Oct).
+- Code names removed from the text (31 Oct): Sec. II-H "(PREREG_ROUND6.md in the code repository)" -> "(the record is in the code repository)"; Sec. III-H "(abl-A7-notc)" removed.
+- Introduction novelty point (ii) now includes the cross-cohort transfer test, matching contribution bullet 3 and the abstract conclusion (31 Oct).
+- Contribution bullet 1 reframed (31 Oct): "...delivering 30, 60, 90, and 120-minute glucose forecasts that consistently outperform a validated persistence baseline" -> "...for 30--120-minute glucose forecasting, as the basis for testing what physiological structure adds".
+- Final worst-case check (31 Oct). Sec. II-I training details: removed "12 for the quantile-head A0" (that single-seed
+  run is no longer reported; the five-seed alarm runs use patience 10, per scripts/run_seeds_a0_a7.py), now "patience
+  10 for the ablation arms and all multi-seed and secondary-analysis runs, and 8 for the final quantile-head model";
+  Sec. II-J "seven training runs reported here" -> "seven primary training runs" (the paper now reports more runs).
+  Also re-derived from results/tables/per_subject_*.csv and results/loso/per_subject_loso.csv: Table I rows for this
+  work and persistence (both cohorts, all horizons), Sec. III-K comparison claims, MAE skill range 12.2-31.6%,
+  LOSO 12/12 (MAE) and 10/12 (RMSE): all match.
